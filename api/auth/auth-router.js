@@ -53,16 +53,16 @@ router.post('/register', async (req, res, next) => {
     } else if (existing) {
       res.json('username taken')
     } else {
-      next()
+      Auth.add(user)
+        .then(newUser => {
+          res.json(newUser)
+        })
+        .catch(next)
     }
   } catch (err) {
     next(err)
   }
-    Auth.add(user)
-    .then(newUser => {
-      res.json(newUser)
-    })
-    .catch(next)
+    
 });
 
 router.post('/login', (req, res, next) => {
