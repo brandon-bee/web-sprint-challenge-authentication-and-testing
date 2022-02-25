@@ -46,23 +46,27 @@ router.post('/register', async (req, res, next) => {
   user.password = hash
 
   try {
-    const existing = await Auth.findBy(user.username)
-
     if (!user.username || !user.password) {
       res.json('username and password required')
-    } else if (existing) {
-      res.json('username taken')
+    } else if (user.username && user.password) {
+      const existing = await Auth.findBy(user.username)
+      if (existing) {
+        res.json('username taken')
+      } else {
+        next()
+      }
     } else {
-      Auth.add(user)
-        .then(newUser => {
-          res.json(newUser)
-        })
-        .catch(next)
+      next()
     }
   } catch (err) {
     next(err)
   }
-    
+  
+  Auth.add(user)
+    .then(newUser => {
+      res.json(newUser)
+    })
+    .catch(next)
 });
 
 router.post('/login', (req, res, next) => {
