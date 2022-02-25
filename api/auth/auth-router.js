@@ -1,4 +1,18 @@
 const router = require('express').Router();
+const Auth = require('./auth-model');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { TOKEN_SECRET } = require('../config');
+
+function buildToken (user) {
+  const payload = {
+    username: user.username
+  }
+  const options = {
+    expiresIn: '1d'
+  }
+  return jwt.sign(payload, TOKEN_SECRET, options)
+}
 
 router.post('/register', (req, res) => {
   res.end('implement register, please!');
