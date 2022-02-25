@@ -15,7 +15,7 @@ function buildToken (user) {
   return jwt.sign(payload, TOKEN_SECRET, options)
 }
 
-router.post('/register', checkPayload, checkUsernameFree, async (req, res, next) => {
+router.post('/register', checkPayload, checkUsernameFree, (req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
