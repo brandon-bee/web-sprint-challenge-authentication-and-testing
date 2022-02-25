@@ -3,6 +3,7 @@ const Auth = require('./auth-model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { TOKEN_SECRET } = require('../config');
+const { checkPayload, checkUsernameFree } = require('./auth-middleware')
 
 function buildToken (user) {
   const payload = {
@@ -14,7 +15,7 @@ function buildToken (user) {
   return jwt.sign(payload, TOKEN_SECRET, options)
 }
 
-router.post('/register', async (req, res, next) => {
+router.post('/register', checkPayload, checkUsernameFree, async (req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -44,23 +45,6 @@ router.post('/register', async (req, res, next) => {
 
   const hash = bcrypt.hashSync(user.password, 8)
   user.password = hash
-
-  try {
-    if (!user.username || !user.password) {
-      res.json('username and password required')
-    } else if (user.username && user.password) {
-      const existing = await Auth.findBy(user.username)
-      if (existing) {
-        res.json('username taken')
-      } else {
-        next()
-      }
-    } else {
-      next()
-    }
-  } catch (err) {
-    next(err)
-  }
   
   Auth.add(user)
     .then(newUser => {
