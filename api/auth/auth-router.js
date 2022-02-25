@@ -14,8 +14,7 @@ function buildToken (user) {
   return jwt.sign(payload, TOKEN_SECRET, options)
 }
 
-router.post('/register', (req, res) => {
-  res.end('implement register, please!');
+router.post('/register', async (req, res, next) => {
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -41,9 +40,32 @@ router.post('/register', (req, res) => {
     4- On FAILED registration due to the `username` being taken,
       the response body should include a string exactly as follows: "username taken".
   */
+  let user = req.body
+
+  const hash = bcrypt.hashSync(user.password, 8)
+  user.password = hash
+
+  try {
+    const existing = await Auth.findBy(user.username)
+
+    if (!user.username || !user.password) {
+      res.json('username and password required')
+    } else if (existing) {
+      res.json('username taken')
+    } else {
+      next()
+    }
+  } catch (err) {
+    next(err)
+  }
+    Auth.add(user)
+    .then(newUser => {
+      res.json(newUser)
+    })
+    .catch(next)
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', (req, res, next) => {
   res.end('implement login, please!');
   /*
     IMPLEMENT
