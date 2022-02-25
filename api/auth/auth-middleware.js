@@ -29,6 +29,8 @@ async function checkUsernameFree (req, res, next) {
   }
 }
 
+
+
 module.exports = {
   checkPayload,
   checkUsernameFree

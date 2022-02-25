@@ -54,7 +54,6 @@ router.post('/register', checkPayload, checkUsernameFree, (req, res, next) => {
 });
 
 router.post('/login', checkPayload, (req, res, next) => {
-  res.end('implement login, please!');
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -89,7 +88,10 @@ router.post('/login', checkPayload, (req, res, next) => {
           token
         })
       } else {
-        next({ status: 401, message: 'invalid credentials' })
+        next({
+          status: 401,
+          message: 'invalid credentials'
+        })
       }
     })
     .catch(next)
